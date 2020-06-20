@@ -13,11 +13,22 @@ for(let y = 0; y < block_num_w; y++) {
   tbl[y] = new Array(block_num_h).fill(0);
 }
 
+var tbl_cache = new Array(block_num_h);
+for(let y = 0; y < block_num_w; y++) {
+  tbl_cache[y] = new Array(block_num_h).fill(0);
+}
+
 // mouse
 var mouse_count = 0;
 var over_mouse = false;
 var mouse_start = [0, 0]; // マウスのスタート位置
 var mouse_end = [0, 0]; // マウスのエンド位置
+
+var upper_left;
+var upper_right;
+
+var lower_left;
+var lower_right;
 
 var locked = false;
 
@@ -30,9 +41,10 @@ function mouseReleased() {
   locked = false;
 }*/
 
+
 function mouseClicked(){
   if (over_mouse){ // マウスクリック後に離した場合
-    paintBlock(mouse_start, mouse_end);
+    paintBlock(upper_left, upper_right, lower_left, lower_right, tbl);
     mouse_count += 1;
     over_mouse = false;
   }
@@ -44,13 +56,6 @@ function mousePressed() {
     locked = true;
   } else {
     locked = false;
-  }
-}
-*/
-/*
-function mouseDragged() {
-  if (locked) {
-    mouse_end = mouseGridToBlockGrid(mouseX, mouseY);
   }
 }
 */
@@ -66,38 +71,40 @@ function mouseGridToBlockGrid(input_mouseX, input_mouseY){ // マウス座標か
   }
 }
 
-function paintBlock(mouse_start, mouse_end){
+function paintBlock(upper_left, upper_right, lower_left, lower_right, table){
   // マウスの移動範囲で長方形に色塗り
-  let upper_left = min(mouse_start[0], mouse_end[0]);
-  let upper_right = max(mouse_start[0], mouse_end[0]);
-  
-  let lower_left = min(mouse_start[1], mouse_end[1]);
-  let lower_right = max(mouse_start[1], mouse_end[1]);
   for (let i = upper_left; i < upper_right+1; i++){
     for (let j = lower_left; j < lower_right+1; j++){
-      tbl[i][j] = 1;
+      table[i][j] = 1;
     }
   }
 }
 
 function draw() {
-  print(mouse_start, mouse_end);
+  //print(mouse_start, mouse_end);
+  print(tbl_cache);
   background(220);
   strokeWeight(0.4);
+  
   for (let i = 0; i < block_num_w; i++) {
     for (let j = 0; j < block_num_h; j++){
       if (tbl[i][j] == 0) {
         noFill()
       } else {
         // fill(0,0,0, 50);
-        fill(color_block[0]);
+        fill(color_block[0]); // tblを元に色塗り
       }
       rect(35+i*w_block, 30+j*h_block, w_block, h_block);
       if (35+i*w_block <= mouseX && mouseX < 35+(i+1)*w_block &&
           30+j*h_block <= mouseY && mouseY < 30+(j+1)*h_block) {
         fill(0,0,0, 50);
-        rect(35+i*w_block, 30+j*h_block, w_block, h_block);
+        rect(35+i*w_block, 30+j*h_block, w_block, h_block); // 選択部分をハイライト
         if (mouseIsPressed){
+          upper_left = min(mouse_start[0], mouse_end[0]);
+          upper_right = max(mouse_start[0], mouse_end[0]);
+          
+          lower_left = min(mouse_start[1], mouse_end[1]);
+          lower_right = max(mouse_start[1], mouse_end[1]);
           if (tbl[i][j] == 0 ) {
             if (over_mouse == false) { // 最初のマウスクリック
               mouse_start = [i, j];
@@ -106,7 +113,7 @@ function draw() {
           }
           //tbl[i][j] = 1; // 色塗り
           mouse_end = [i, j];
-          //paintBlock(mouse_start, mouse_end);
+          paintBlock(upper_left, upper_right, lower_left, lower_right, tbl_cache);
         }
       }
     }
