@@ -38,6 +38,48 @@ var locked = false;
 var selected_x, selected_y;
 var selected_color = 0;
 
+// class palette
+var palette;
+
+class Palette{
+  constructor(margin_x, margin_y){
+    this.text_x = margin_x;
+    this.text_y = margin_y;
+    this.palette_x = margin_x;
+    this.palette_y = margin_y + 10;
+    this.selected_x = margin_x + 165;
+    this.selected_y = margin_y;
+  }
+
+  draw(){
+    // Palette
+    fill(0);
+    text("Palette", this.text_x, this.text_y);
+    for(let i=0; i<5;i++){
+      fill(color_block[i]);
+      rect(this.palette_x+W_BLOCK*i, this.palette_y, W_BLOCK, H_BLOCK);
+    }
+    
+    // Selected
+    fill(0);
+    text("Selected", this.selected_x, this.selected_y);
+    fill(color_block[selected_color]);
+    rect(this.selected_x, this.selected_y+10, W_BLOCK, H_BLOCK);
+  }
+
+  click(){
+    for(let i=0; i<5; i++){
+      if (this.palette_x+W_BLOCK*i <= mouseX &&
+          mouseX < this.palette_x+(i+1)*W_BLOCK &&
+          this.palette_y <= mouseY &&
+          mouseY < this.palette_y+H_BLOCK){
+            print(i);
+      }
+    }
+  }
+}
+
+
 function mouseReleased() {
   locked = false;
 }
@@ -49,6 +91,9 @@ function mouseClicked(){
     mouse_count += 1;
     over_mouse = false;
   }
+  
+  // パレット
+  palette.click();
 }
 
 
@@ -81,28 +126,10 @@ function paintBlock(upper_left, upper_right, lower_left, lower_right, table){
   }
 }
 
-// 色塗り用のパレット
-function drawPalette(selected_color){
-  // パレット
-  text("Palette", 30, 40);
-  for (let i = 0; i< 5; i++){
-    fill(color_block[i]);
-    rect(35+W_BLOCK*i, 50, W_BLOCK, H_BLOCK);
-    if (mouseIsPressed){
-      print("click test");
-    }
-  }
-
-  // 現在選択している色
-  fill(0);
-  text("Selected", 200, 40);
-  fill(color_block[selected_color]);
-  rect(205, 50, W_BLOCK, H_BLOCK);
-}
-
 function setup() {  
   color_block = [color("#FF723D"), color("#FFD334"), color("#052F83"), color("#0776EC"), color("#4FEEE7")]
   createCanvas(500, 600);
+  palette = new Palette(35, 40);
 }
 
 function draw() {
@@ -121,8 +148,7 @@ function draw() {
   background(220);
   strokeWeight(0.4);
 
-  drawPalette(0);
-  
+  palette.draw();
   
   for (let i = 0; i < BLOCK_NUM_W; i++) {
     for (let j = 0; j < BLOCK_NUM_H; j++){
