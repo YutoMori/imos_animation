@@ -36,6 +36,7 @@ var lower_right;
 var locked = false;
 
 var selected_x, selected_y;
+var selected_color = 0;
 
 function mouseReleased() {
   locked = false;
@@ -87,8 +88,11 @@ function drawPalette(selected_color){
   for (let i = 0; i< 5; i++){
     fill(color_block[i]);
     rect(35+W_BLOCK*i, 50, W_BLOCK, H_BLOCK);
+    if (mouseIsPressed){
+      print("click test");
+    }
   }
-  
+
   // 現在選択している色
   fill(0);
   text("Selected", 200, 40);
