@@ -30,7 +30,6 @@ var mouse_end = [0, 0]; // マウスのエンド位置
 
 var upper_left;
 var upper_right;
-
 var lower_left;
 var lower_right;
 
@@ -38,11 +37,6 @@ var locked = false;
 
 var selected_x, selected_y;
 
-function setup() {  
-  color_block = [color("#FF723D"), color("#FFD334"), color("#052F83"), color("#0776EC"), color("#4FEEE7")]
-  createCanvas(500, 500);
-}
-/*
 function mouseReleased() {
   locked = false;
 }
@@ -64,7 +58,6 @@ function mousePressed() {
     locked = false;
   }
 }
-*/
 
 function mouseGridToBlockGrid(input_mouseX, input_mouseY){ // マウス座標からブロック座標
   for (let i = 0; i < block_num_w; i++){
@@ -87,6 +80,20 @@ function paintBlock(upper_left, upper_right, lower_left, lower_right, table){
   }
 }
 
+// 色塗り用のパレット
+function drawPalette(){
+  text("Palette", 30, 40);
+  for (let i = 0; i< 5; i++){
+    fill(color_block[i]);
+    rect(35+w_block*i, 50, w_block, h_block);
+  }
+}
+
+function setup() {  
+  color_block = [color("#FF723D"), color("#FFD334"), color("#052F83"), color("#0776EC"), color("#4FEEE7")]
+  createCanvas(500, 600);
+}
+
 function draw() {
   //print(mouse_start, mouse_end);
   //print(tbl); 
@@ -102,13 +109,15 @@ function draw() {
   //print(locked);
   background(220);
   strokeWeight(0.4);
+
+  drawPalette();
+  
   
   for (let i = 0; i < block_num_w; i++) {
     for (let j = 0; j < block_num_h; j++){
       if (tbl[i][j] == -1) {
         noFill();
       } else {
-        // fill(0,0,0, 50);
         fill(color_block[tbl[i][j]%5]); // tblを元に色塗り
       }
       rect(left_margin+i*w_block, top_margin+j*h_block, w_block, h_block);
