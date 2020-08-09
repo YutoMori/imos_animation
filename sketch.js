@@ -1,25 +1,25 @@
-const w_block = 20 // ブロックの横幅 px
-const h_block = 20 // ブロックの縦幅 px
+const W_BLOCK = 20 // ブロックの横幅 px
+const H_BLOCK = 20 // ブロックの縦幅 px
 
-const block_num_w = 20; // 横方向のブロックの個数
-const block_num_h = 5; // 縦方向のブロックの個数
+const BLOCK_NUM_W = 20; // 横方向のブロックの個数
+const BLOCK_NUM_H = 5; // 縦方向のブロックの個数
 
-const left_margin = 35; // 左の空白
-const top_margin = 100; // 上の空白
+const LEFT_MARGIN = 35; // 左の空白
+const TOP_MARGIN = 100; // 上の空白
 
 
 // block color (https://www.schemecolor.com/new-media.php#download)
 var color_block;
 
 // tbl 20 × 5, -1 = nofill -1 != fill
-var tbl = new Array(block_num_h);
-for(let y = 0; y < block_num_w; y++) {
-  tbl[y] = new Array(block_num_h).fill(-1);
+var tbl = new Array(BLOCK_NUM_H);
+for(let y = 0; y < BLOCK_NUM_W; y++) {
+  tbl[y] = new Array(BLOCK_NUM_H).fill(-1);
 }
 
-var tbl_cache = new Array(block_num_h);
-for(let y = 0; y < block_num_w; y++) {
-  tbl_cache[y] = new Array(block_num_h).fill(-1);
+var tbl_cache = new Array(BLOCK_NUM_H);
+for(let y = 0; y < BLOCK_NUM_W; y++) {
+  tbl_cache[y] = new Array(BLOCK_NUM_H).fill(-1);
 }
 
 // mouse
@@ -60,10 +60,10 @@ function mousePressed() {
 }
 
 function mouseGridToBlockGrid(input_mouseX, input_mouseY){ // マウス座標からブロック座標
-  for (let i = 0; i < block_num_w; i++){
-    for (let j = 0; j < block_num_h; j++){
-      if (left_margin+i*w_block <= input_mouseX && input_mouseX < left_margin+(i+1)*w_block &&
-      top_margin+j*h_block <= input_mouseY && input_mouseY < top_margin+(j+1)*h_block) {
+  for (let i = 0; i < BLOCK_NUM_W; i++){
+    for (let j = 0; j < BLOCK_NUM_H; j++){
+      if (LEFT_MARGIN+i*W_BLOCK <= input_mouseX && input_mouseX < LEFT_MARGIN+(i+1)*W_BLOCK &&
+      TOP_MARGIN+j*H_BLOCK <= input_mouseY && input_mouseY < TOP_MARGIN+(j+1)*H_BLOCK) {
         return [i,j];
       }
     }
@@ -81,12 +81,19 @@ function paintBlock(upper_left, upper_right, lower_left, lower_right, table){
 }
 
 // 色塗り用のパレット
-function drawPalette(){
+function drawPalette(selected_color){
+  // パレット
   text("Palette", 30, 40);
   for (let i = 0; i< 5; i++){
     fill(color_block[i]);
-    rect(35+w_block*i, 50, w_block, h_block);
+    rect(35+W_BLOCK*i, 50, W_BLOCK, H_BLOCK);
   }
+  
+  // 現在選択している色
+  fill(0);
+  text("Selected", 200, 40);
+  fill(color_block[selected_color]);
+  rect(205, 50, W_BLOCK, H_BLOCK);
 }
 
 function setup() {  
@@ -110,28 +117,28 @@ function draw() {
   background(220);
   strokeWeight(0.4);
 
-  drawPalette();
+  drawPalette(0);
   
   
-  for (let i = 0; i < block_num_w; i++) {
-    for (let j = 0; j < block_num_h; j++){
+  for (let i = 0; i < BLOCK_NUM_W; i++) {
+    for (let j = 0; j < BLOCK_NUM_H; j++){
       if (tbl[i][j] == -1) {
         noFill();
       } else {
         fill(color_block[tbl[i][j]%5]); // tblを元に色塗り
       }
-      rect(left_margin+i*w_block, top_margin+j*h_block, w_block, h_block);
+      rect(LEFT_MARGIN+i*W_BLOCK, TOP_MARGIN+j*H_BLOCK, W_BLOCK, H_BLOCK);
 
       // 下にimos配列
       noFill();
-      rect(left_margin+i*w_block, top_margin+j*h_block + 300, w_block, h_block);
+      rect(LEFT_MARGIN+i*W_BLOCK, TOP_MARGIN+j*H_BLOCK + 300, W_BLOCK, H_BLOCK);
       fill(0);
-      text("+1", left_margin+i*w_block, top_margin+j*h_block + 300, w_block, h_block);
+      text("+1", LEFT_MARGIN+i*W_BLOCK, TOP_MARGIN+j*H_BLOCK + 300, W_BLOCK, H_BLOCK);
 
-      if (left_margin+i*w_block <= mouseX && mouseX < left_margin+(i+1)*w_block &&
-      top_margin+j*h_block <= mouseY && mouseY < top_margin+(j+1)*h_block) {
+      if (LEFT_MARGIN+i*W_BLOCK <= mouseX && mouseX < LEFT_MARGIN+(i+1)*W_BLOCK &&
+      TOP_MARGIN+j*H_BLOCK <= mouseY && mouseY < TOP_MARGIN+(j+1)*H_BLOCK) {
         fill(0,0,0, 50);
-        rect(left_margin+i*w_block, top_margin+j*h_block, w_block, h_block); // 選択部分をハイライト
+        rect(LEFT_MARGIN+i*W_BLOCK, TOP_MARGIN+j*H_BLOCK, W_BLOCK, H_BLOCK); // 選択部分をハイライト
         if (mouseIsPressed){
           upper_left = min(mouse_start[0], mouse_end[0]);
           upper_right = max(mouse_start[0], mouse_end[0]);
